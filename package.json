@@ -1,0 +1,31 @@
+{
+  "name": "node-fastify-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "db:migrate": "bunx --bun prisma migrate dev --name init",
+    "db:generate": "bunx --bun prisma generate",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "vitest": "^4.1.6"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^13.0.2",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.8.5",
+    "joi": "^18.2.1",
+    "pg": "^8.20.0"
+  }
+}

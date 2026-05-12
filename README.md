@@ -1,4 +1,4 @@
-# node-fastify-api
+# bun-fastify-api
 
 To install dependencies:
 

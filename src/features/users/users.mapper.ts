@@ -1,5 +1,5 @@
-import type { User } from '../../generated/prisma/client';
-import type { UserCreateResponseDto } from '../schemas/User';
+import type { User } from '../../../generated/prisma/client';
+import type { UserCreateResponseDto } from './users.schema';
 
 export const toUserResponseDto = (createdUser: User): UserCreateResponseDto => {
   return {

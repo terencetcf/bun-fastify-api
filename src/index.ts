@@ -1,86 +1,34 @@
-import fastify from 'fastify';
-import userRouter from './routes/user.router';
-
-import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
-import { healthCheck } from './utils/health-check.util';
+import { buildApp } from './app';
 
 const port = Number(process.env.API_PORT) || 3000;
+const server = buildApp();
 
-const startServer = async () => {
-  const server = fastify({
-    logger: true,
-  });
-
-  // Register middlewares
-  server.register(cors);
-  server.register(helmet);
-
-  // Register routes
-  server.register(userRouter, { prefix: '/api/user' });
-
-  // Set error handler
-  server.setErrorHandler((error: any, _request, reply) => {
-    server.log.error(error);
-
-    if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
-      return reply.status(error.statusCode).send({ error: error.message });
-    }
-
-    reply.status(500).send({ error: 'Something went wrong' });
-  });
-
-  // Health check route
-  server.get('/health', async (_request, reply) => {
+const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
+signals.forEach((signal) => {
+  process.on(signal, async () => {
     try {
-      await healthCheck();
-      reply.status(200).send({
-        message: 'Health check endpoint success.',
-      });
-    } catch (e) {
-      reply.status(500).send({
-        message: 'Health check endpoint failed.',
-      });
+      await server.close();
+      server.log.error(`Closed application on ${signal}`);
+      process.exit(0);
+    } catch (err) {
+      server.log.error({ err }, `Error closing application on ${signal}`);
+      process.exit(1);
     }
   });
+});
 
-  // Root route
-  server.get('/', (request, reply) => {
-    reply.status(200).send({ message: 'Hello from fastify boilerplate!!' });
-  });
-
-  // Graceful shutdown
-  const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
-  signals.forEach((signal) => {
-    process.on(signal, async () => {
-      try {
-        await server.close();
-        server.log.error(`Closed application on ${signal}`);
-        process.exit(0);
-      } catch (err) {
-        server.log.error({ err }, `Error closing application on ${signal}`);
-        process.exit(1);
-      }
-    });
-  });
-
-  // Start server
-  try {
-    await server.listen({
-      port,
-    });
-  } catch (err) {
-    server.log.error(err);
-    process.exit(1);
-  }
-
-  return server;
-};
-
-// Handle unhandled rejections
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
   process.exit(1);
 });
 
-export const server = await startServer();
+try {
+  await server.listen({
+    port,
+  });
+} catch (err) {
+  server.log.error(err);
+  process.exit(1);
+}
+
+export { server };

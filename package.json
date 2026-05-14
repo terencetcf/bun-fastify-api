@@ -7,7 +7,7 @@
     "dev": "bun run --hot src/index.ts",
     "db:migrate": "bunx --bun prisma migrate dev --name init",
     "db:generate": "bunx --bun prisma generate",
-    "test": "vitest"
+    "test": "bun --bun vitest"
   },
   "devDependencies": {
     "@types/bun": "latest",

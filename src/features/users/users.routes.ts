@@ -1,13 +1,13 @@
 import type { FastifyInstance } from 'fastify';
-import * as controllers from '../controllers';
+import * as controllers from './users.controller';
 import {
   UserCreateRequestSchema,
   type UserCreateRequestDto,
   UserListQueryStringSchema,
   type UserListQueryStringDto,
-} from '../schemas/User';
+} from './users.schema';
 
-async function userRouter(fastify: FastifyInstance) {
+async function usersRoutes(fastify: FastifyInstance) {
   fastify.get<{
     Querystring: UserListQueryStringDto;
   }>(
@@ -20,7 +20,7 @@ async function userRouter(fastify: FastifyInstance) {
         description: 'Get list of users endpoint',
       },
     },
-    controllers.userList,
+    controllers.listUsers,
   );
 
   fastify.post<{
@@ -35,8 +35,8 @@ async function userRouter(fastify: FastifyInstance) {
         description: 'Create a new user endpoint',
       },
     },
-    controllers.userCreate,
+    controllers.createUser,
   );
 }
 
-export default userRouter;
+export default usersRoutes;

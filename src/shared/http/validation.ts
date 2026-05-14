@@ -1,7 +1,12 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import type Joi from 'joi';
 
-export const preValidation = (schema: Joi.ObjectSchema) => {
+type RequestBodyValidator = {
+  validate: (body: unknown) => {
+    error?: Error;
+  };
+};
+
+export const preValidation = (schema: RequestBodyValidator) => {
   return (
     request: FastifyRequest,
     reply: FastifyReply,

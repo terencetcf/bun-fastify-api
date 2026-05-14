@@ -1,6 +1,18 @@
-import { describe, it, expect } from 'vitest';
-import { server } from '../../src/index.ts';
-import type { UserCreateResponseDto } from '../../src/schemas/User.ts';
+import type { FastifyInstance } from 'fastify';
+import { beforeAll, afterAll, describe, it, expect } from 'vitest';
+import { buildApp } from '../../../src/app.ts';
+import type { UserCreateResponseDto } from '../../../src/features/users/users.schema.ts';
+
+let server: FastifyInstance;
+
+beforeAll(async () => {
+  server = buildApp();
+  await server.ready();
+});
+
+afterAll(async () => {
+  await server.close();
+});
 
 describe('create new user', () => {
   it('should should create a new user', async () => {

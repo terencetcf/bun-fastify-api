@@ -17,4 +17,8 @@ export type UserListQueryStringDto = Type.Static<
   typeof UserListQueryStringSchema
 >;
 
-export type UserCreateResponseDto = UserCreateRequestDto;
+export type UserCreateResponseDto = {
+  email: string;
+  first_name?: string;
+  last_name?: string;
+};

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { server } from '../../src/index.ts';
+import type { UserCreateResponseDto } from '../../src/schemas/User.ts';
 
 describe('create new user', () => {
   it('should should create a new user', async () => {
@@ -76,4 +77,100 @@ describe('create new user', () => {
       });
     },
   );
+});
+
+describe('get users', () => {
+  it('should return a list of users', async () => {
+    // Arrange
+    const timestamp = new Date().getTime();
+    const users = [
+      {
+        email: `list-user-1-${timestamp}@example.com`,
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+      },
+      {
+        email: `list-user-2-${timestamp}@example.com`,
+        first_name: 'Grace',
+        last_name: 'Hopper',
+      },
+    ];
+
+    for (const user of users) {
+      await server.inject({
+        method: 'POST',
+        url: '/api/user/new',
+        payload: user,
+      });
+    }
+
+    // Act
+    const res = await server.inject({
+      method: 'GET',
+      url: '/api/user',
+    });
+
+    // Assert
+    expect(res.statusCode).toBe(200);
+    const data = res.json();
+    expect(data.users).toEqual(expect.any(Array));
+    expect(data.pagination).toMatchObject({
+      page: 1,
+      limit: 10,
+    });
+  });
+
+  it('should paginate the list of users', async () => {
+    // Arrange
+    const timestamp = new Date().getTime();
+    const users = [
+      {
+        email: `paged-user-1-${timestamp}@example.com`,
+        first_name: 'Katherine',
+        last_name: 'Johnson',
+      },
+      {
+        email: `paged-user-2-${timestamp}@example.com`,
+        first_name: 'Mary',
+        last_name: 'Jackson',
+      },
+      {
+        email: `paged-user-3-${timestamp}@example.com`,
+        first_name: 'Dorothy',
+        last_name: 'Vaughan',
+      },
+    ];
+
+    for (const user of users) {
+      await server.inject({
+        method: 'POST',
+        url: '/api/user/new',
+        payload: user,
+      });
+    }
+
+    // Act
+    const res = await server.inject({
+      method: 'GET',
+      url: '/api/user?page=1&limit=3',
+    });
+
+    // Assert
+    expect(res.statusCode).toBe(200);
+    const data = res.json();
+    expect(data.users).toHaveLength(3);
+    expect(data.users).toSatisfy((dataUsers: UserCreateResponseDto[]) =>
+      dataUsers.every((dataUser) =>
+        users.some((user) => user.email === dataUser.email),
+      ),
+    );
+    expect(data.pagination).toMatchObject({
+      page: 1,
+      limit: 3,
+    });
+    expect(data.pagination.total).toBeGreaterThanOrEqual(users.length);
+    expect(data.pagination.total_pages).toBe(
+      Math.ceil(data.pagination.total / 3),
+    );
+  });
 });

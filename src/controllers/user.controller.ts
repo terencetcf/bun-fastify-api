@@ -1,6 +1,9 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { ERRORS } from '../helpers/errors.helper';
-import type { UserCreateRequestDto } from '../schemas/User';
+import type {
+  UserCreateRequestDto,
+  UserListQueryStringDto,
+} from '../schemas/User';
 import { prisma } from '../lib/prisma';
 import { toUserResponseDto } from '../mappers/user.mapper';
 
@@ -28,5 +31,35 @@ export const userCreate = async (
 
   return reply.code(201).send({
     user: responseDto,
+  });
+};
+
+export const userList = async (
+  request: FastifyRequest<{
+    Querystring: UserListQueryStringDto;
+  }>,
+  reply: FastifyReply,
+) => {
+  const page = Number(request.query.page ?? 1);
+  const limit = Number(request.query.limit ?? 10);
+  const skip = (page - 1) * limit;
+
+  const total = await prisma.user.count();
+  const users = await prisma.user.findMany({
+    skip,
+    take: limit,
+    orderBy: {
+      id: 'desc',
+    },
+  });
+
+  return reply.code(200).send({
+    users: users.map(toUserResponseDto),
+    pagination: {
+      page,
+      limit,
+      total,
+      total_pages: Math.ceil(total / limit),
+    },
   });
 };

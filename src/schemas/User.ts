@@ -6,6 +6,15 @@ export const UserCreateRequestSchema = Type.Object({
   last_name: Type.Optional(Type.String()),
 });
 
+export const UserListQueryStringSchema = Type.Object({
+  page: Type.Optional(Type.Integer({ minimum: 1, default: 1 })),
+  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100, default: 10 })),
+});
+
 export type UserCreateRequestDto = Type.Static<typeof UserCreateRequestSchema>;
+
+export type UserListQueryStringDto = Type.Static<
+  typeof UserListQueryStringSchema
+>;
 
 export type UserCreateResponseDto = UserCreateRequestDto;

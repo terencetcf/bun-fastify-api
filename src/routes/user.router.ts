@@ -7,7 +7,7 @@ async function userRouter(fastify: FastifyInstance) {
   fastify.post<{
     Body: UserCreateRequestDto;
   }>(
-    '/signup',
+    '/new',
     {
       schema: {
         body: {
@@ -21,7 +21,7 @@ async function userRouter(fastify: FastifyInstance) {
         },
       },
       config: {
-        description: 'User signup endpoint',
+        description: 'Create a new user endpoint',
       },
       preValidation: preValidation(signupSchema),
     },

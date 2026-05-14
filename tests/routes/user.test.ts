@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { server } from '../../src/index.ts';
 
-describe('sign up', () => {
+describe('create new user', () => {
   it('should should create a new user', async () => {
     // Arrange
     const payload = {
@@ -13,7 +13,7 @@ describe('sign up', () => {
     // Act
     const res = await server.inject({
       method: 'POST',
-      url: '/api/user/signup',
+      url: '/api/user/new',
       payload: payload,
     });
 

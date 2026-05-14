@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 import * as controllers from '../controllers';
-import { signupSchema, type UserCreateRequestDto } from '../schemas/User';
-import { preValidation } from '../utils/prevalidation.util';
+import {
+  UserCreateRequestSchema,
+  type UserCreateRequestDto,
+} from '../schemas/User';
 
 async function userRouter(fastify: FastifyInstance) {
   fastify.post<{
@@ -10,22 +12,13 @@ async function userRouter(fastify: FastifyInstance) {
     '/new',
     {
       schema: {
-        body: {
-          type: 'object',
-          required: ['email'],
-          properties: {
-            email: { type: 'string', format: 'email' },
-            first_name: { type: 'string' },
-            last_name: { type: 'string' },
-          },
-        },
+        body: UserCreateRequestSchema,
       },
       config: {
         description: 'Create a new user endpoint',
       },
-      preValidation: preValidation(signupSchema),
     },
-    controllers.signUp,
+    controllers.userCreate,
   );
 }
 

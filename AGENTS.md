@@ -52,6 +52,7 @@ This is a Bun-powered TypeScript API using Fastify, Prisma 7, Postgres, Joi, and
 - Use unique test data for database-backed tests to avoid collisions.
 - If a test imports `server` from `src/index.ts`, be aware that importing starts the Fastify server.
 - Prefer assertions against public HTTP responses, not implementation internals, for route tests.
+- Consider to use it.each to reduce number of tests if the tests are very similar
 
 ## Editing Notes
 

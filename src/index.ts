@@ -20,8 +20,13 @@ const startServer = async () => {
   server.register(userRouter, { prefix: '/api/user' });
 
   // Set error handler
-  server.setErrorHandler((error, _request, reply) => {
+  server.setErrorHandler((error: any, _request, reply) => {
     server.log.error(error);
+
+    if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+      return reply.status(error.statusCode).send({ error: error.message });
+    }
+
     reply.status(500).send({ error: 'Something went wrong' });
   });
 

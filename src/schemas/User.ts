@@ -1,15 +1,11 @@
-import Joi from 'joi';
+import Type from 'typebox';
 
-export type UserCreateRequestDto = {
-  email: string;
-  first_name?: string;
-  last_name?: string;
-};
+export const UserCreateRequestSchema = Type.Object({
+  email: Type.String({ format: 'email' }),
+  first_name: Type.String(),
+  last_name: Type.Optional(Type.String()),
+});
+
+export type UserCreateRequestDto = Type.Static<typeof UserCreateRequestSchema>;
 
 export type UserCreateResponseDto = UserCreateRequestDto;
-
-export const signupSchema = Joi.object({
-  email: Joi.string().email().required(),
-  first_name: Joi.string().optional(),
-  last_name: Joi.string().optional(),
-});

@@ -4,7 +4,7 @@ import type { UserCreateRequestDto } from '../schemas/User';
 import { prisma } from '../lib/prisma';
 import { toUserResponseDto } from '../mappers/user.mapper';
 
-export const signUp = async (
+export const userCreate = async (
   request: FastifyRequest<{
     Body: UserCreateRequestDto;
   }>,
